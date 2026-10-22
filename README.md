@@ -15,7 +15,7 @@
 
 6. The file `combo_hg19.genomesize` contains the lengths of the 23 chromosomes in human cells, measured as the number of base pairs in each chromosome. The file `mm10.main.nochrM.chrom.sizes` contains the lengths of the 20 chromosomes in mouse cells, measured as the number of base pairs in each chromosome.
 
-##Usage
+## Usage
 
 ### Step 1. Feature extraction
 
@@ -25,5 +25,5 @@ First, run the feature extraction files in the `Feature_extraction` subdirectory
 
 Next, run `main_ablation.py` in the folder `train&test` to complete the training and testing of MFFE. `main_ablation.py` is a general-purpose main function for ablation experiments, in which only the `feature_config` configuration needs to be modified to control which feature sets are used.
 
-To ensure the scientific validity and accuracy of the experimental results, to reduce the dependence on a specific dataset partition, and to evaluate the generalization ability of the model, we split the dataset into a training set and a test set, performing the split 50 times with a different random seed each time to ensure the randomness of the data splitting process. This process generates 50 pairs of training and test sets; each training set is used to train the model, and the trained model is then evaluated on the corresponding test set. The evaluation results are stored in the subfolder `train&test_result`.
+To ensure the scientific validity and accuracy of the experimental results, to reduce the dependence on a specific dataset partition, and to evaluate the generalization ability of the model, we split the dataset into a training set and a test set, performing the split 50 times with a different random seed each time to ensure the randomness of the data splitting process. This process generates 50 pairs of training and test sets; each training set is used to train the model, and the trained model is then evaluated on the corresponding test set. The evaluation results are stored in the subfolder `***_train_test_results`.
 
