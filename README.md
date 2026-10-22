@@ -10,3 +10,5 @@
 3. The subdirectory "Feature_extraction" contains eight code files for generating eight feature sets (DBCP, ENBCP, MRBCP, NBCP, PSDCP, RBCP, SBCP, and SSDCP), and the file "methods.py" contains several functions shared by the  eight code files.
 
 4. The subdirectory "***_features" stores all features created by Python scripts in "Feature\_extraction".
+
+5. The subdirectory "train_and_test" contains the code for training and testing the MFFE framework. The file "main_ablation.py" contains the main code of the MFFE framework for training on the training set and testing on the test set, and the file "method_ablation.py" contains the declarations of certain functions and classes called in "main_ablation.py".
