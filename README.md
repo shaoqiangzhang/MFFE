@@ -23,7 +23,7 @@ First, run the feature extraction files in the `Feature_extraction` subdirectory
 
 ### Step 2. Training and testing MFFE
 
-Next, run `main_ablation.py` in the folder `train&test` to complete the training and testing of MFFE. `main_ablation.py` is a general-purpose main function for ablation experiments, in which only the `feature_config` configuration needs to be modified to control which feature sets are used.
+Next, run `main_ablation.py` in the folder `train_and_test` to complete the training and testing of MFFE. `main_ablation.py` is a general-purpose main function for ablation experiments, in which only the `feature_config` configuration needs to be modified to control which feature sets are used.
 
 To ensure the scientific validity and accuracy of the experimental results, to reduce the dependence on a specific dataset partition, and to evaluate the generalization ability of the model, we split the dataset into a training set and a test set, performing the split 50 times with a different random seed each time to ensure the randomness of the data splitting process. This process generates 50 pairs of training and test sets; each training set is used to train the model, and the trained model is then evaluated on the corresponding test set. The evaluation results are stored in the subfolder `***_train_test_results`.
 
