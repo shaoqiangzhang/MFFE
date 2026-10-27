@@ -37,7 +37,7 @@ def calculate_ENBCP(contact_matrix, max_length):
 
 def con_ran(cell_id, type, chr_name, max_length):
     # 定义接触矩阵文件的路径
-    file_path = f"/MFFE/Collombet_classification/Collombet_Data/{type}/cell_{cell_id}_{chr_name}.txt"
+    file_path = f"../Collombet_Data/{type}/cell_{cell_id}_{chr_name}.txt"
     
     # 打开接触矩阵文件
     print(f"Opening file: {file_path}")  # 打印调试信息
@@ -91,7 +91,7 @@ def main():
     
     # 创建染色体和其长度的索引
     index = {}
-    with open('/MFFE/Collombet_classification/mm10.main.nochrM.chrom.sizes') as f:
+    with open('../mm10.main.nochrM.chrom.sizes') as f:
         lines = f.readlines()
     for line in lines:
         chr_name, length = line.split()
@@ -120,7 +120,7 @@ def main():
                 cell_dict[str(cell_number)][chr] = ENBCP
 
     # 定义输出路径
-    out_path = '/MFFE/Collombet_classification/Collombet_features/ENBCP.npy'
+    out_path = '../Collombet_features/ENBCP.npy'
     
     # 保存计算出的特征
     np.save(out_path, cell_dict)
