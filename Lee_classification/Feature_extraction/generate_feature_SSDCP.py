@@ -1,0 +1,149 @@
+import numpy as np
+from methods import sum_matrix, smooth_mean
+import time  # 导入时间模块来计算运行时间
+
+# 该函数用于计算单一染色体的SSDCP特征
+def calculate_SSDCP(contact_matrix, max_length, scale):
+    matrix1 = contact_matrix
+    # len(contact_matrix) 是接触矩阵的行数
+    for i in range(len(contact_matrix)):
+        # space_neighbour_contact_infor 用于存储当前bin的空间邻接信息（线性邻接 + 空间邻接）
+        space_neighbour_contact_infor = []
+        # index1 用于存储与当前bin线性邻接的bin的索引
+        index1 = []
+        space_neighbour_contact_infor.append(contact_matrix[i, :])  # 添加当前bin的接触信息
+
+        # 获取与当前bin线性邻接的bin的接触信息
+        for m in range(i - 1, i + 2):
+            if m < 0 or m > len(contact_matrix) - 1 or m == i:
+                continue
+            space_neighbour_contact_infor.append(contact_matrix[m, :])
+            index1.append(m)
+
+        # 获取与当前bin空间邻接的bin的接触信息
+        for n in range(len(contact_matrix[0])):
+            if n in index1:
+                continue
+            if contact_matrix[i, n] != 0 and i != n:
+                space_neighbour_contact_infor.append(contact_matrix[n, :])
+
+        # 使用平滑后的接触信息替换原接触信息
+        matrix1[i, :] = smooth_mean(space_neighbour_contact_infor)
+    
+    # 将矩阵对称化，保证上下三角对称
+    m = np.triu(matrix1, 1)
+    n = m.T
+    smoothed_matrix = m + n + np.diag(np.diag(matrix1))
+
+    # 计算SSDCP特征
+    SSDCP = []
+    chr_total = sum_matrix(smoothed_matrix)  # 计算总接触数
+    new_matrix = np.zeros((max_length + 2 * scale, max_length + 2 * scale))  # 初始化新矩阵
+    for i in range(max_length):
+        for j in range(max_length):
+            # 将原接触矩阵的数据放入 new_matrix 中，并增加零填充
+            new_matrix[i + scale, j + scale] = smoothed_matrix[i, j]
+
+    # 使用新矩阵计算SSDCP特征
+    for i in range(max_length):
+        bin = i + scale
+        a = sum_matrix(new_matrix[bin - scale:bin + scale + 1, bin - scale:bin + scale + 1])  # 计算局部矩阵的和
+        if a == 0:
+            SSDCP.append(float(0))
+        else:
+            SSDCP.append(float(a / chr_total))
+    return SSDCP
+
+def con_ran(cell_id, type, chr_name, max_length):
+    # 定义接触矩阵文件路径
+    file_path = f"../Lee_Data/{type}/cell_{cell_id}_{chr_name}.txt"
+    print(f"Opening file: {file_path}")  # 打印路径信息
+
+    with open(file_path) as chr_file:
+        lines = chr_file.readlines()
+    
+    # 初始化接触矩阵
+    contact_matrix = np.zeros((max_length, max_length))
+
+    # 遍历文件中的每一行，更新接触矩阵
+    for line in lines:
+        bin1, bin2, num = line.split()
+        bin1 = int(bin1)
+        bin2 = int(bin2)
+        
+        if bin1 >= max_length or bin2 >= max_length:
+            continue
+        
+        contact_matrix[bin1, bin2] += int(float(num))
+        if bin1 != bin2:
+            contact_matrix[bin2, bin1] += int(float(num))
+
+    # 计算SSDCP特征
+    SSDCP = calculate_SSDCP(contact_matrix, max_length, scale=1)
+    return SSDCP
+
+def format_time(seconds):
+    # 将秒数转换为小时、分钟、秒的格式
+    hours = seconds // 3600
+    minutes = (seconds % 3600) // 60
+    seconds = seconds % 60
+    time_str = ""
+    if hours > 0:
+        time_str += f"{int(hours)} h "
+    if minutes > 0:
+        time_str += f"{int(minutes)} min "
+    if seconds > 0:
+        time_str += f"{int(seconds)} s"
+    return time_str.strip()
+
+def main():
+    start_time = time.time()  # 记录开始时间
+    
+    # 定义细胞类型及其数量
+    types = {'Astro': 449, 'Endo': 204, 'L4': 131, 'L5': 180, 'L6': 86, 'L23': 551, 'MG': 422, 'Ndnf': 144,
+             'NN1': 100, 'ODC': 1243, 'OPC': 203, 'Pvalb': 134, 'Sst': 216, 'Vip': 171}
+    resolution = 1000000  # 1M分辨率
+    
+    # 创建染色体和其长度的索引
+    index = {}
+    with open('../combo_hg19.genomesize') as f:
+        lines = f.readlines()
+    for line in lines:
+        chr_name, length = line.split()
+        max_len = int(int(length) / resolution)
+        index[chr_name] = max_len + 1  # 加1是因为除法会向下取整
+
+    print(f"Chromosome index: {index}")
+
+    # 初始化存储细胞数据的字典
+    cell_dict = {}
+    cell_number = 0
+    chr_list = sorted(index.keys())
+
+    # 遍历每个数据集
+    for type in types:
+        for c_num in range(types[type]):  # 处理所有细胞
+            cell_id = c_num + 1
+            cell_number += 1
+            cell_dict[str(cell_number)] = {}
+            print(f"Processing cell {cell_id} of type {type}")
+            
+            # 处理当前细胞的所有染色体
+            for chr in chr_list:
+                max_len = index[chr]
+                SSDCP = con_ran(cell_id, type, chr, max_len)
+                cell_dict[str(cell_number)][chr] = SSDCP
+
+    # 定义输出路径
+    out_path = '../Lee_features/SSDCP.npy'
+    
+    # 保存计算出的特征
+    np.save(out_path, cell_dict)
+    print(f"Feature extraction completed. Saved to {out_path}")
+
+    # 计算并打印运行的总时间
+    elapsed_time = time.time() - start_time
+    print(f"Total running time: {format_time(elapsed_time)}")
+
+if __name__ == '__main__':
+    main()
