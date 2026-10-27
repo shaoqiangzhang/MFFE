@@ -1,4 +1,3 @@
-#!/home/graduates/anaconda3/envs/scHiClassifier/bin/python
 """
 Collombet数据集消融实验主函数
 与4DN数据集代码结构保持一致
@@ -87,7 +86,7 @@ def main():
     resolution = 1000000
     tps = sorted(types)
     
-    f = open('/MFFE/Collombet_classification/mm10.main.nochrM.chrom.sizes') 
+    f = open('../mm10.main.nochrM.chrom.sizes') 
     index = {}
     lines = f.readlines()
     for line in lines:
@@ -130,7 +129,7 @@ def main():
                      2486, 5885, 3662, 2975, 576]
 
     # 特征集路径
-    feature_path = "/MFFE/Collombet_classification/Collombet_features"
+    feature_path = "../Collombet_features"
     
     # 加载所有启用的特征集数据
     print("\n加载特征集数据...")
@@ -142,7 +141,7 @@ def main():
     print("特征集数据加载完成!\n")
 
     # 创建输出目录和文件
-    output_dir = "/MFFE/Collombet_classification/train_and_test/Collombet_train_test_results"
+    output_dir = "Collombet_train_test_results"
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
     

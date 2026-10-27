@@ -25,7 +25,7 @@ def seed_torch(seed=2021):
     torch.backends.cudnn.benchmark = False
 
 def generate_bin():
-    f = open('/MFFE/Collombet_classification/mm10.main.nochrM.chrom.sizes')
+    f = open('../mm10.main.nochrM.chrom.sizes')
     index = {}
     resolution = 1000000
     lines = f.readlines()
