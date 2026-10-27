@@ -86,7 +86,7 @@ def main():
     resolution = 1000000
     tps = sorted(types)
     
-    f = open('MFFE/4DN_classification/combo_hg19.genomesize') 
+    f = open('../combo_hg19.genomesize') 
     index = {}
     lines = f.readlines()
     for line in lines:
@@ -129,7 +129,7 @@ def main():
                      2486, 5885, 3662, 2975, 576]
 
     # 特征集路径
-    feature_path = "/MFFE/4DN_classification/4DN_features"
+    feature_path = "../4DN_features"
     
     # 加载所有启用的特征集数据
     print("\n加载特征集数据...")
@@ -141,7 +141,7 @@ def main():
     print("特征集数据加载完成!\n")
 
     # 创建输出目录和文件
-    output_dir = "/MFFE/4DN_classification/train_and_test/4DN_train_test_results"
+    output_dir = "4DN_train_test_results"
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
     

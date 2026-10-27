@@ -25,7 +25,7 @@ def seed_torch(seed=2021):
     torch.backends.cudnn.benchmark = False
 
 def generate_bin():
-    f = open('/MFFE/4DN_classification/combo_hg19.genomesize')
+    f = open('../combo_hg19.genomesize')
     index = {}
     resolution = 1000000
     lines = f.readlines()
